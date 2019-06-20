@@ -24,6 +24,7 @@ const ServiceBox = styled.div`
   }
   img {
     display: flex;
+    height: 10vh;
   }
 
   :last-child {

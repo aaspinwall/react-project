@@ -186,6 +186,8 @@ class Home extends React.Component {
   render() {
     const Header = styled(SectionHeader)`
       border-bottom: solid 1px black;
+      color: rgb(219, 200, 190);
+      font-size: 2rem;
     `;
     return (
       <div>
