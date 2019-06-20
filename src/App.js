@@ -73,8 +73,10 @@ class Nav extends React.Component {
       display: ${props => (props.visible ? "block" : "none")};
       padding: 2rem 0;
       text-decoration: none;
+      color: white;
       :active,
-      :visited {
+      :visited,
+      :hover {
         color: white;
       }
     `;
