@@ -10,6 +10,11 @@ const SectionHeader = styled.h3`
   padding: 1rem 0;
 `;
 
+const SectionSubtitle = styled(SectionHeader)`
+  padding: 0;
+  margin: 0;
+`;
+
 const ServiceBox = styled.div`
   display: flex;
   justify-content: space-between;
@@ -36,4 +41,4 @@ const Wrapper = styled.div`
   margin: 0 2rem;
 `;
 
-export { ServiceBox, Wrapper, SectionHeader };
+export { ServiceBox, Wrapper, SectionHeader, SectionSubtitle };

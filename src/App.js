@@ -1,14 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import {
-  Navbar,
-  ServiceBox,
-  Wrapper,
-  SectionHeader,
-  Toggleable,
-  navLinks,
-} from "./styles";
+import { ServiceBox, Wrapper, SectionHeader, SectionSubtitle } from "./styles";
 import "./style.css";
 
 const data = {
@@ -128,6 +121,18 @@ class SlideShow extends React.Component {
     super(props);
     this.state = { imageTurn: 0, maxSlides: 5 };
   }
+
+  nextSlide = () =>
+    this.setState(
+      {
+        imageTurn:
+          this.state.maxSlides - 1 === this.state.imageTurn
+            ? 0
+            : this.state.imageTurn + 1,
+      },
+      console.log(this.state.imageTurn, this.state.maxSlides)
+    );
+
   kittens = i => {
     const SlideShowWrapper = styled.div`
       padding: 3rem 0;
@@ -159,24 +164,14 @@ class SlideShow extends React.Component {
         {arr.map(e => {
           return e;
         })}
-        <TestButton
-          onClick={() =>
-            this.setState(
-              {
-                imageTurn:
-                  this.state.maxSlides - 1 === this.state.imageTurn
-                    ? 0
-                    : this.state.imageTurn + 1,
-              },
-              console.log(this.state.imageTurn, this.state.maxSlides)
-            )
-          }
-        >
-          Click for next image
-        </TestButton>
       </SlideShowWrapper>
     );
   };
+  componentDidMount() {
+    const slideLoop = setInterval(() => {
+      this.nextSlide();
+    }, 1000);
+  }
   render() {
     return this.kittens(this.state.maxSlides + 1);
   }
@@ -191,8 +186,12 @@ class Home extends React.Component {
     `;
     return (
       <div>
-        <Header>Potter's Math</Header>
-        <SlideShow />
+        <Wrapper>
+          <Header>Potter's Math</Header>
+          <SectionHeader>Potter's Math</SectionHeader>
+          <SectionSubtitle>Subtitle</SectionSubtitle>
+          <SlideShow />
+        </Wrapper>
       </div>
     );
   }
