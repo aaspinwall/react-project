@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { connect } from "react-redux";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import { ServiceBox, Wrapper, SectionHeader, SectionSubtitle } from "./styles";
 import "./style.css";
@@ -123,15 +124,12 @@ class SlideShow extends React.Component {
   }
 
   nextSlide = () =>
-    this.setState(
-      {
-        imageTurn:
-          this.state.maxSlides - 1 === this.state.imageTurn
-            ? 0
-            : this.state.imageTurn + 1,
-      },
-      console.log(this.state.imageTurn, this.state.maxSlides)
-    );
+    this.setState({
+      imageTurn:
+        this.state.maxSlides - 1 === this.state.imageTurn
+          ? 0
+          : this.state.imageTurn + 1,
+    });
 
   kittens = i => {
     const SlideShowWrapper = styled.div`
@@ -155,7 +153,7 @@ class SlideShow extends React.Component {
         <Img
           id={index}
           visible={this.state.imageTurn === index}
-          src={"https://placekitten.com/g/1100/80" + index}
+          src={"img/stock" + (index + 1) + ".jpg"}
         />
       );
     }
@@ -178,6 +176,9 @@ class SlideShow extends React.Component {
 }
 
 class Home extends React.Component {
+  constructor(props) {
+    super(props);
+  }
   render() {
     const Header = styled(SectionHeader)`
       border-bottom: solid 1px black;
@@ -225,22 +226,50 @@ const Footer = styled.footer`
 function FooterElement() {
   return (
     <Footer>
-      <div>Tel: 2229887744</div>
-      <div>Email</div>
+      <a
+        href='https://wa.me/5215510071736/?text=Im%20inquiring%20about%20the%20apartment%20listing'
+        target='_blank'
+      >
+        Whatsapp
+      </a>
+      <div>javierjevf@gmail.com</div>
+      <div>55 1007 1736</div>
       <div>Social icons</div>
     </Footer>
   );
 }
 
-function App() {
-  return (
-    <Router>
-      <Route path='/' exact={false} component={Nav} />
-      <Route path='/' exact={true} component={Home} />
-      <Route path='/servicios' exact={true} component={Services} />
-      <Route path='/' exact={false} component={FooterElement} />
-    </Router>
-  );
+class WrappedApp extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  componentDidMount() {
+    console.log(this);
+  }
+  render() {
+    return (
+      <Router>
+        <Route path='/' exact={false} component={Nav} />
+        <Route path='/' exact={true} component={Home} />
+        <Route path='/servicios' exact={true} component={Services} />
+        <Route path='/' exact={false} component={FooterElement} />
+      </Router>
+    );
+  }
+}
+
+let mapStateToProps = st => {
+  return {
+    counter: st.counter,
+  };
+};
+
+let Main = connect(mapStateToProps)(WrappedApp);
+
+class App extends React.Component {
+  render() {
+    return <Main />;
+  }
 }
 
 export default App;
