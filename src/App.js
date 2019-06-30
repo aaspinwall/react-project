@@ -4,6 +4,9 @@ import { connect } from "react-redux";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import { ServiceBox, Wrapper, SectionHeader, SectionSubtitle } from "./styles";
 import "./style.css";
+import ConnectedCard from "./ConnectedCard";
+import GameManager from "./GameManager";
+import CardMaker from "./CardMaker";
 
 const data = {
   services: [
@@ -91,6 +94,13 @@ class Nav extends React.Component {
           >
             Servicios
           </Toggleable>
+          <Toggleable
+            onClick={() => this.setState({ open: false })}
+            visible={this.state.open}
+            to='/game'
+          >
+            Game
+          </Toggleable>
         </NavLinkWrap>
         <i
           onClick={() => this.setState({ open: !this.state.open })}
@@ -168,7 +178,7 @@ class SlideShow extends React.Component {
   componentDidMount() {
     const slideLoop = setInterval(() => {
       this.nextSlide();
-    }, 1000);
+    }, 1500);
   }
   render() {
     return this.kittens(this.state.maxSlides + 1);
@@ -223,28 +233,46 @@ const Footer = styled.footer`
   padding: 1rem;
 `;
 
-function FooterElement() {
-  return (
-    <Footer>
-      <a
-        href='https://wa.me/5215510071736/?text=Im%20inquiring%20about%20the%20apartment%20listing'
-        target='_blank'
-      >
-        Whatsapp
-      </a>
-      <div>javierjevf@gmail.com</div>
-      <div>55 1007 1736</div>
-      <div>Social icons</div>
-    </Footer>
-  );
+class FooterElement extends React.Component {
+  render() {
+    const FooterLinks = styled.div`
+      > a,
+      a:visited {
+        color: white;
+      }
+      i {
+        padding: 0 1rem;
+      }
+    `;
+    return (
+      <Footer>
+        <FooterLinks>
+          <a href='mailto:javierjevf@gmail.com'>
+            <i class='fa fa-envelope' aria-hidden='true' />
+            javierjevf@gmail.com
+          </a>
+        </FooterLinks>
+
+        <FooterLinks>
+          <i class='fas fa-phone    ' />
+          55 1007 1736
+        </FooterLinks>
+        <FooterLinks>
+          <a
+            href='https://wa.me/5215510071736/?text=Im%20inquiring%20about%20the%20apartment%20listing'
+            target='_blank'
+          >
+            <i class='fab fa-whatsapp' />
+          </a>
+        </FooterLinks>
+      </Footer>
+    );
+  }
 }
 
 class WrappedApp extends React.Component {
   constructor(props) {
     super(props);
-  }
-  componentDidMount() {
-    console.log(this);
   }
   render() {
     return (
@@ -253,6 +281,9 @@ class WrappedApp extends React.Component {
         <Route path='/' exact={true} component={Home} />
         <Route path='/servicios' exact={true} component={Services} />
         <Route path='/' exact={false} component={FooterElement} />
+        <Route path='/card' exact={true} component={ConnectedCard} />
+        <Route path='/game' exact={true} component={GameManager} />
+        <Route path='/maker' exact={true} component={CardMaker} />
       </Router>
     );
   }
@@ -264,7 +295,15 @@ let mapStateToProps = st => {
   };
 };
 
-let Main = connect(mapStateToProps)(WrappedApp);
+const mapDispatchToProps = dispatch => ({
+  handlePriceChange: evt =>
+    dispatch({ type: "SET_PRICE", price: evt.target.value }),
+});
+
+let Main = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(WrappedApp);
 
 class App extends React.Component {
   render() {
