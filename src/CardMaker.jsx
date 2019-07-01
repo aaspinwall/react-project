@@ -2,123 +2,98 @@ import React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 
-class CardMaker extends React.Component {
+class NewCard extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { cards: [""] };
+    this.state = { choiceArray: [] };
   }
-  addCard = () => {
-    this.setState({ cards: [...this.state.cards].concat("") });
-  };
+
   render() {
+    const choice = (
+      <div>
+        <label>Choice {console.log(this.props)}</label>
+        <input onChange={this.props.handleChoice} />
+        <button>Remove</button>
+      </div>
+    );
+    const choiceArray = [];
     return (
       <div>
-        <h3>Create a deck</h3>
-        <label>Title</label>
-        <input />
-        {this.state.cards.map(card => (
-          <NewCard />
-        ))}
-        <button onClick={this.addCard}>Add card</button>
+        <label>Question {this.props.i}</label>
+        <input
+          onChange={this.props.handleQuestion}
+          type='text'
+          name={this.props.i}
+        />
+        <button
+          onClick={() =>
+            this.setState({ choiceArray: this.state.choiceArray.concat("") })
+          }
+        >
+          Add Choice
+        </button>
+        {this.state.choiceArray.map((element, i) => {
+          return (
+            <div>
+              <label>Choice {i}</label>
+              <input onChange={this.props.handleChoice} name={i} />
+              <button>Remove</button>
+            </div>
+          );
+        })}
       </div>
     );
   }
 }
 
-class NewCard extends React.Component {
+class CardMaker extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { name: "", questions: [""], answer: "", cards: {} };
+    this.state = { name: "", questions: [] };
   }
-  componentDidMount() {}
-
   handleTitle = e => {
     this.setState({ name: e.target.value });
   };
+  addCard = () => {
+    this.setState({ questions: [...this.state.questions].concat({}) });
+  };
   handleQuestion = e => {
-    let name = parseInt(e.target.name);
+    let number = parseInt(e.target.name);
     let value = e.target.value;
-    this.setState({
-      questions: this.state.questions.map((item, i) => {
-        return i === name ? value : item;
-      }),
-    });
-    console.log(e.target);
-  };
 
-  removeChoice = e => {
-    e.preventDefault();
-    let name = parseInt(e.target.name);
-    this.setState({
-      questions: this.state.questions.filter((item, i) => {
-        return name !== i;
-      }),
-    });
-    console.log(name);
-  };
-  addField = e => {
-    e.preventDefault();
-    this.setState({
-      questions: [...this.state.questions].concat(""),
-    });
-  };
-  submit = e => {
-    e.preventDefault();
-    let st = this.state;
-    let qArray = [];
-    for (const key in st) {
-      if (parseInt(key) >= 0) {
-        qArray.push(st[key]);
-        this.setState({ [key]: "" });
-      }
-    }
     this.setState(
       {
-        name: "",
-        cards: [this.state.cards].concat(this.state.questions),
-        questions: [""],
+        questions: this.state.questions.map((item, i) => {
+          return number === i ? { question: value } : item;
+        }),
       },
-      () => console.log(this.state)
+      () => console.log(this.state.questions)
     );
+  };
+  handleChoice = e => {
+    let number = parseInt(e.target.name);
+    let value = e.target.value;
+    console.log(e.target);
   };
   render() {
     return (
-      <form>
-        <label>Question: </label>
-        <input
-          type='text'
-          onChange={this.handleTitle}
-          value={this.state.name}
-        />
+      <div>
+        <div>Create a deck</div>
+        <label>Game name:</label>
+        <input type='text' onChange={this.handleTitle} />
+        <button onClick={this.addCard}>Add card</button>
         <div>
           {this.state.questions.map((q, i) => {
             return (
-              <div>
-                <label>Choice {i + 1} </label>
-                <input
-                  onChange={this.handleQuestion}
-                  type='text'
-                  name={i}
-                  value={q}
-                />
-                <label>Mark as answer: </label>
-                <input
-                  type='radio'
-                  name='answer'
-                  onClick={() =>
-                    this.setState({ answer: this.state.questions[i] })
-                  }
-                />
-                <button onClick={this.removeChoice} name={i}>
-                  Remove
-                </button>
-              </div>
+              <NewCard
+                i={i}
+                handleQuestion={this.handleQuestion}
+                handleChoice={this.handleChoice}
+              />
             );
           })}
         </div>
-        <button onClick={this.addField}>Add choice</button>
-        <button onClick={this.submit}>Submit</button>
-      </form>
+      </div>
     );
   }
 }
