@@ -4,32 +4,9 @@ import { connect } from "react-redux";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import { ServiceBox, Wrapper, SectionHeader, SectionSubtitle } from "./styles";
 import "./style.css";
-import ConnectedCard from "./ConnectedCard";
+import data from "./data";
 import GameManager from "./GameManager";
 import CardMaker from "./CardMaker";
-
-const data = {
-  services: [
-    {
-      name: "Matemáticas para secundaria",
-      price: 200,
-      picture: "https://placekitten.com/g/300/301",
-      link: "#",
-    },
-    {
-      name: "Matemáticas para prepa",
-      price: 200,
-      picture: "https://placekitten.com/g/300/300",
-      link: "#",
-    },
-    {
-      name: "Matemáticas para prepa",
-      price: 200,
-      picture: "https://placekitten.com/g/300/302",
-      link: "#",
-    },
-  ],
-};
 
 class Nav extends React.Component {
   constructor(props) {
@@ -85,21 +62,21 @@ class Nav extends React.Component {
             visible={this.state.open}
             to='/'
           >
-            Inicio
+            Home
           </Toggleable>
           <Toggleable
             onClick={() => this.setState({ open: false })}
             visible={this.state.open}
-            to='/servicios'
+            to='/'
           >
-            Servicios
+            Search
           </Toggleable>
           <Toggleable
             onClick={() => this.setState({ open: false })}
             visible={this.state.open}
-            to='/game'
+            to='/maker'
           >
-            Game
+            Create deck
           </Toggleable>
         </NavLinkWrap>
         <i
@@ -111,109 +88,28 @@ class Nav extends React.Component {
   }
 }
 
-class Service extends React.Component {
-  render() {
-    const allServices = data.services.map(service => {
-      return (
-        <ServiceBox>
-          <img src={service.picture} />
-          <div>{service.name}</div>
-          <div>{service.price}</div>
-          <div>{service.link}</div>
-        </ServiceBox>
-      );
-    });
-    return allServices;
-  }
-}
-
-class SlideShow extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { imageTurn: 0, maxSlides: 5 };
-  }
-
-  nextSlide = () =>
-    this.setState({
-      imageTurn:
-        this.state.maxSlides - 1 === this.state.imageTurn
-          ? 0
-          : this.state.imageTurn + 1,
-    });
-
-  kittens = i => {
-    const SlideShowWrapper = styled.div`
-      padding: 3rem 0;
-      width: 100%;
-    `;
-    const Img = styled.img`
-      width: 100%;
-      max-height: 450px;
-      object-fit: cover;
-      display: ${props => (props.visible ? "block" : "none")};
-      filter: opacity(${props => (props.visible ? 1 : 0)});
-    `;
-    const TestButton = styled.button`
-      position: absolute;
-      z-index: 9999;
-    `;
-    let arr = [];
-    for (let index = 0; index < i; index++) {
-      arr.push(
-        <Img
-          id={index}
-          visible={this.state.imageTurn === index}
-          src={"img/stock" + (index + 1) + ".jpg"}
-        />
-      );
-    }
-    return (
-      <SlideShowWrapper>
-        {arr.map(e => {
-          return e;
-        })}
-      </SlideShowWrapper>
-    );
-  };
-  componentDidMount() {
-    const slideLoop = setInterval(() => {
-      this.nextSlide();
-    }, 1500);
-  }
-  render() {
-    return this.kittens(this.state.maxSlides + 1);
-  }
-}
-
 class Home extends React.Component {
   constructor(props) {
     super(props);
   }
   render() {
+    const game = Object.keys(data);
     const Header = styled(SectionHeader)`
       border-bottom: solid 1px black;
       color: rgb(219, 200, 190);
       font-size: 2rem;
     `;
     return (
-      <div>
-        <Wrapper>
-          <Header>Potter's Math</Header>
-          <SectionHeader>Potter's Math</SectionHeader>
-          <SectionSubtitle>Subtitle</SectionSubtitle>
-          <SlideShow />
-        </Wrapper>
-      </div>
-    );
-  }
-}
-
-class Services extends React.Component {
-  render() {
-    return (
       <Wrapper>
-        <SectionHeader>Servicios</SectionHeader>
-        <Service />
+        {game.map(game => {
+          let name = data[game].name;
+          return (
+            <div>
+              <h4>{name}</h4>
+              <Link to={"/game/" + game}>Play</Link>
+            </div>
+          );
+        })}
       </Wrapper>
     );
   }
@@ -270,6 +166,15 @@ class FooterElement extends React.Component {
   }
 }
 
+function RouteGameById(props) {
+  console.log(props);
+  return data[props.id] ? (
+    <GameManager routerProps={props} data={data[props.id]} />
+  ) : (
+    <div>No matching game</div>
+  );
+}
+
 class WrappedApp extends React.Component {
   constructor(props) {
     super(props);
@@ -279,11 +184,15 @@ class WrappedApp extends React.Component {
       <Router>
         <Route path='/' exact={false} component={Nav} />
         <Route path='/' exact={true} component={Home} />
-        <Route path='/servicios' exact={true} component={Services} />
         <Route path='/' exact={false} component={FooterElement} />
-        <Route path='/card' exact={true} component={ConnectedCard} />
-        <Route path='/game' exact={true} component={GameManager} />
         <Route path='/maker' exact={true} component={CardMaker} />
+        <Route
+          path='/game/:id'
+          exact={true}
+          render={routeProps => (
+            <RouteGameById id={routeProps.match.params.id} />
+          )}
+        />
       </Router>
     );
   }

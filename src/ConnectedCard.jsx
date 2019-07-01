@@ -71,14 +71,9 @@ class SampleCard extends React.Component {
       }
     `;
 
-    const sampleData = {
-      id: 0,
-      question: "What is the capital of Thailand?",
-      answers: ["Hanoi", "Comcolor", "Bokbok", "Kuala Lumpur", "Bangkok"],
-      correctAnswer: "Bangkok",
-    };
     let name = this.props.gameName;
     let data = this.props.questionData;
+    let answer = this.props.questionData.correctAnswer;
 
     return (
       <GameWrapper>
@@ -104,12 +99,12 @@ let mapStateToProps = st => {
   };
 };
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch, ownProps) => ({
   handleAnswer: evt =>
     dispatch({
       type: "answer",
       newAnswer: evt.target.innerText,
-      correctAnswer: "X",
+      correctAnswer: ownProps.questionData.correctAnswer,
     }),
 });
 

@@ -5,7 +5,30 @@ import { connect } from "react-redux";
 class CardMaker extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { name: "", questions: [""], qlen: 1, cards: {} };
+    this.state = { cards: [""] };
+  }
+  addCard = () => {
+    this.setState({ cards: [...this.state.cards].concat("") });
+  };
+  render() {
+    return (
+      <div>
+        <h3>Create a deck</h3>
+        <label>Title</label>
+        <input />
+        {this.state.cards.map(card => (
+          <NewCard />
+        ))}
+        <button onClick={this.addCard}>Add card</button>
+      </div>
+    );
+  }
+}
+
+class NewCard extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { name: "", questions: [""], answer: "", cards: {} };
   }
   componentDidMount() {}
 
@@ -14,28 +37,33 @@ class CardMaker extends React.Component {
   };
   handleQuestion = e => {
     let name = parseInt(e.target.name);
-    this.setState(
-      {
-        [name]: e.target.value,
-      },
-      () => console.log(this.state)
-    );
-  };
-  removeChoice = e => {
+    let value = e.target.value;
     this.setState({
-      questions: this.state.questions.filter(
-        (q, i) => i === parseInt(e.target.name)
-      ),
+      questions: this.state.questions.map((item, i) => {
+        return i === name ? value : item;
+      }),
     });
     console.log(e.target);
   };
-  addField = e => {
+
+  removeChoice = e => {
+    e.preventDefault();
+    let name = parseInt(e.target.name);
     this.setState({
-      qlen: this.state.qlen + 1,
+      questions: this.state.questions.filter((item, i) => {
+        return name !== i;
+      }),
+    });
+    console.log(name);
+  };
+  addField = e => {
+    e.preventDefault();
+    this.setState({
       questions: [...this.state.questions].concat(""),
     });
   };
-  submit = () => {
+  submit = e => {
+    e.preventDefault();
     let st = this.state;
     let qArray = [];
     for (const key in st) {
@@ -44,20 +72,24 @@ class CardMaker extends React.Component {
         this.setState({ [key]: "" });
       }
     }
-    this.setState({
-      name: "",
-      questions: [""],
-      qlen: 1,
-      cards: { card1: qArray },
-    });
-    console.log(this.state);
+    this.setState(
+      {
+        name: "",
+        cards: [this.state.cards].concat(this.state.questions),
+        questions: [""],
+      },
+      () => console.log(this.state)
+    );
   };
   render() {
     return (
-      <div>
-        <div>Create a deck</div>
-        <label>Deck Name: </label>
-        <input onChange={this.handleTitle} value={this.state.name} />
+      <form>
+        <label>Question: </label>
+        <input
+          type='text'
+          onChange={this.handleTitle}
+          value={this.state.name}
+        />
         <div>
           {this.state.questions.map((q, i) => {
             return (
@@ -67,7 +99,15 @@ class CardMaker extends React.Component {
                   onChange={this.handleQuestion}
                   type='text'
                   name={i}
-                  value={this.state[i]}
+                  value={q}
+                />
+                <label>Mark as answer: </label>
+                <input
+                  type='radio'
+                  name='answer'
+                  onClick={() =>
+                    this.setState({ answer: this.state.questions[i] })
+                  }
                 />
                 <button onClick={this.removeChoice} name={i}>
                   Remove
@@ -78,7 +118,7 @@ class CardMaker extends React.Component {
         </div>
         <button onClick={this.addField}>Add choice</button>
         <button onClick={this.submit}>Submit</button>
-      </div>
+      </form>
     );
   }
 }
