@@ -7,6 +7,13 @@ import "./style.css";
 import data from "./data";
 import GameManager from "./GameManager";
 import CardMaker from "./CardMaker";
+import { save, load } from "./localStorage";
+
+if (load() === null) {
+  save(data);
+  console.log("No local storage found, initial data saved");
+}
+var storedData = load();
 
 class Nav extends React.Component {
   constructor(props) {
@@ -93,7 +100,7 @@ class Home extends React.Component {
     super(props);
   }
   render() {
-    const game = Object.keys(data);
+    const game = Object.keys(storedData);
     const Header = styled(SectionHeader)`
       border-bottom: solid 1px black;
       color: rgb(219, 200, 190);
@@ -102,7 +109,7 @@ class Home extends React.Component {
     return (
       <Wrapper>
         {game.map(game => {
-          let name = data[game].name;
+          let name = storedData[game].name;
           return (
             <div>
               <h4>{name}</h4>
@@ -165,11 +172,26 @@ class FooterElement extends React.Component {
     );
   }
 }
+function Config() {
+  return (
+    <div>
+      <button
+        onClick={() => {
+          save(data);
+          load();
+          console.log(storedData);
+        }}
+      >
+        Reset local storage
+      </button>
+    </div>
+  );
+}
 
 function RouteGameById(props) {
   console.log(props);
-  return data[props.id] ? (
-    <GameManager routerProps={props} data={data[props.id]} />
+  return storedData[props.id] ? (
+    <GameManager routerProps={props} data={storedData[props.id]} />
   ) : (
     <div>No matching game</div>
   );
@@ -186,6 +208,7 @@ class WrappedApp extends React.Component {
         <Route path='/' exact={true} component={Home} />
         <Route path='/' exact={false} component={FooterElement} />
         <Route path='/maker' exact={true} component={CardMaker} />
+        <Route path='/config' exact={true} render={Config} />
         <Route
           path='/game/:id'
           exact={true}
@@ -220,4 +243,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export { App, storedData };
