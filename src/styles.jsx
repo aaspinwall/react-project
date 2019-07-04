@@ -39,6 +39,11 @@ const ServiceBox = styled.div`
 
 const Wrapper = styled.div`
   margin: 0 2rem;
+  > input {
+    width: 100%;
+    height: 2rem;
+    border: 2px solid black;
+  }
 `;
 
 export { ServiceBox, Wrapper, SectionHeader, SectionSubtitle };

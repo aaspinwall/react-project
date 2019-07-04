@@ -61,8 +61,9 @@ class Nav extends React.Component {
         color: white;
       }
     `;
+
     return (
-      <Navbar className='trans1'>
+      <Navbar>
         <NavLinkWrap>
           <Toggleable
             onClick={() => this.setState({ open: false })}
@@ -75,13 +76,6 @@ class Nav extends React.Component {
             onClick={() => this.setState({ open: false })}
             visible={this.state.open}
             to='/'
-          >
-            Search
-          </Toggleable>
-          <Toggleable
-            onClick={() => this.setState({ open: false })}
-            visible={this.state.open}
-            to='/maker'
           >
             Create deck
           </Toggleable>
@@ -98,80 +92,61 @@ class Nav extends React.Component {
 class Home extends React.Component {
   constructor(props) {
     super(props);
+    this.state = { game: Object.keys(storedData) };
   }
+  handleChange = e => {
+    let input = e.target.value.toLowerCase();
+    this.setState(
+      {
+        game: Object.keys(storedData).filter(element => {
+          let ob = storedData[element].name.toLowerCase();
+          console.log(storedData[element].name, ob.includes(input));
+          return ob.includes(input);
+        }),
+      },
+      () => console.log(this.state)
+    );
+  };
+
   render() {
-    const game = Object.keys(storedData);
-    const Header = styled(SectionHeader)`
-      border-bottom: solid 1px black;
-      color: rgb(219, 200, 190);
-      font-size: 2rem;
+    const Games = styled.div`
+      padding: 0.5rem 1rem;
+      background: rgb(219, 200, 190);
+      color: white;
+      margin: 1rem;
+      text-align: center;
+      padding: 1rem;
+      > a,
+      a:active,
+      a:visited {
+        color: white;
+        text-decoration: white;
+      }
+    `;
+    const CardWrapper = styled.div`
+      display: flex;
+      justify-content: center;
     `;
     return (
       <Wrapper>
-        {game.map(game => {
-          let name = storedData[game].name;
-          return (
-            <div>
-              <h4>{name}</h4>
-              <Link to={"/game/" + game}>Play</Link>
-            </div>
-          );
-        })}
+        <label>Filter games:</label>
+        <input onChange={this.handleChange} />
+        <CardWrapper>
+          {this.state.game.map(game => {
+            let name = storedData[game].name;
+            return (
+              <Games>
+                <h4>{name}</h4>
+                <Link to={"/game/" + game}>Play</Link>
+              </Games>
+            );
+          })}
+        </CardWrapper>
       </Wrapper>
     );
   }
 }
 
-const Footer = styled.footer`
-  width: 100%;
-  position: fixed;
-  bottom: 0;
-
-  background: black;
-  display: grid;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  text-align: center;
-  padding: 1rem;
-`;
-
-class FooterElement extends React.Component {
-  render() {
-    const FooterLinks = styled.div`
-      > a,
-      a:visited {
-        color: white;
-      }
-      i {
-        padding: 0 1rem;
-      }
-    `;
-    return (
-      <Footer>
-        <FooterLinks>
-          <a href='mailto:javierjevf@gmail.com'>
-            <i class='fa fa-envelope' aria-hidden='true' />
-            javierjevf@gmail.com
-          </a>
-        </FooterLinks>
-
-        <FooterLinks>
-          <i class='fas fa-phone    ' />
-          55 1007 1736
-        </FooterLinks>
-        <FooterLinks>
-          <a
-            href='https://wa.me/5215510071736/?text=Im%20inquiring%20about%20the%20apartment%20listing'
-            target='_blank'
-          >
-            <i class='fab fa-whatsapp' />
-          </a>
-        </FooterLinks>
-      </Footer>
-    );
-  }
-}
 function Config() {
   return (
     <div>
@@ -206,7 +181,6 @@ class WrappedApp extends React.Component {
       <Router>
         <Route path='/' exact={false} component={Nav} />
         <Route path='/' exact={true} component={Home} />
-        <Route path='/' exact={false} component={FooterElement} />
         <Route path='/maker' exact={true} component={CardMaker} />
         <Route path='/config' exact={true} render={Config} />
         <Route
