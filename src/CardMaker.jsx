@@ -5,7 +5,25 @@ import data from "./data";
 import { save, load } from "./localStorage";
 import { storedData } from "./App";
 
-const Card = styled.div``;
+const Card = styled.div`
+  margin: 2rem 20%;
+
+  .bottomButtons {
+    display: flex;
+    justify-content: center;
+    > button {
+      margin: 0 1rem;
+      padding: 1rem;
+      border-radius: 10px;
+    }
+  }
+  > form {
+    margin: 2rem 0;
+  }
+  > input {
+    width: 100%;
+  }
+`;
 
 class CardMaker extends React.Component {
   constructor(props) {
@@ -47,8 +65,10 @@ class CardMaker extends React.Component {
         {this.state.cards.map((card, i) => (
           <NewCard title={this.state.title} sendToParent={this.getData} i={i} />
         ))}
-        <button onClick={this.addCard}>Add card</button>
-        <button onClick={this.submit}>Submit</button>
+        <div className='bottomButtons'>
+          <button onClick={this.addCard}>Add card</button>
+          <button onClick={this.submit}>Submit</button>
+        </div>
       </Card>
     );
   }
@@ -108,7 +128,6 @@ class NewCard extends React.Component {
     this.props.sendToParent(res);
   }
   render() {
-    const ChoiceBlock = styled.div``;
     return (
       <form>
         <label>Question: </label>
@@ -146,7 +165,9 @@ class NewCard extends React.Component {
             );
           })}
         </div>
-        <button onClick={this.addField}>Add choice</button>
+        <button className='addChoice' onClick={this.addField}>
+          Add choice
+        </button>
       </form>
     );
   }

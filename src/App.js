@@ -75,7 +75,7 @@ class Nav extends React.Component {
           <Toggleable
             onClick={() => this.setState({ open: false })}
             visible={this.state.open}
-            to='/'
+            to='/maker'
           >
             Create deck
           </Toggleable>
